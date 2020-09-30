@@ -61,7 +61,14 @@ int d2c_laravel_print_columns(FILE *outfile, umlclasslist tmplist)
 
     if (umla->key.value[0] != 0)
     {
-      fprintf(outfile, "->default(%s)", umla->key.value);
+      if (strcmp(umla->key.value, "null") == 0)
+      {
+        fprintf(outfile, "->nullable()");
+      }
+      else
+      {
+        fprintf(outfile, "->default(%s)", umla->key.value);
+      }
     }
 
     fprintf(outfile, ";\n");
