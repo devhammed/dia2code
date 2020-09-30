@@ -20,6 +20,31 @@ generate_code_laravel.c  -  Function that generates Laravel migrations.
 
 #define TABS "    " /* 4 */
 
+char *str_replace(char *str, char *oldstr, char *newstr)
+{
+  int i;
+  char bstr[strlen(str)];
+
+  memset(bstr, 0, sizeof(bstr));
+
+  for (i = 0; i < strlen(str); i++)
+  {
+    if (!strncmp(str + i, oldstr, strlen(oldstr)))
+    {
+      strcat(bstr, newstr);
+      i += strlen(oldstr) - 1;
+    }
+    else
+    {
+      strncat(bstr, str + i, 1);
+    }
+  }
+
+  strcpy(str, bstr);
+
+  return str;
+}
+
 /*
  * print out class columns.
  */
@@ -110,7 +135,9 @@ int d2c_laravel_print_class_decl(FILE *outfile, umlclasslist tmplist)
           "use Illuminate\\Database\\Schema\\Blueprint;",
           "use Illuminate\\Database\\Migrations\\Migration;");
 
-  fprintf(outfile, "class Create%sTable extends Migration\n{\n", tmplist->key->name);
+  fprintf(outfile,
+          "class Create%sTable extends Migration\n{\n",
+          str_replace(tmplist->key->name, "_", ""));
 
   fprintf(outfile,
           "%spublic function up()\n%s{\n"
