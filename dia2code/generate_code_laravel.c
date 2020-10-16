@@ -96,6 +96,11 @@ int d2c_laravel_print_columns(FILE *outfile, umlclasslist tmplist)
       }
     }
 
+    if (umla->key.comment[0] != 0)
+    {
+      fprintf(outfile, "->comment('%s')", umla->key.comment);
+    }
+
     fprintf(outfile, ";\n");
 
     umla = umla->next;
