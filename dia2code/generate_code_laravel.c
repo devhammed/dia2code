@@ -60,45 +60,108 @@ int d2c_laravel_print_columns(FILE *outfile, umlclasslist tmplist)
             TABS,
             TABS);
 
-    int index = 0;
-    char *ptr = strtok(umla->key.type, parameters_delim);
-
-    while (ptr != NULL)
+    if (strcmp(umla->key.type, "foreign") == 0)
     {
-      if (index == 0) // assuming the type function will be the first.
+      int index = 0;
+      char *ptr = strtok(umla->key.name, parameters_delim);
+
+      fprintf(outfile, "foreign(");
+
+      while (ptr != NULL)
       {
-        fprintf(outfile, "%s('%s'", ptr, umla->key.name);
+        if (index == 0)
+        {
+          // column
+          fprintf(outfile, "'%s')", ptr);
+        }
+        else if (index == 1)
+        {
+          // reference column
+          fprintf(outfile, "->references('%s')", ptr);
+        }
+        else if (index == 2)
+        {
+          // reference table
+          fprintf(outfile, "->on('%s')", ptr);
+        }
+        else if (index == 3)
+        {
+          // on delete type
+          fprintf(outfile, "->onDelete('%s')", ptr);
+        }
+        else
+        {
+          // I don't know what the user is thinking!
+          break;
+        }
+
+        ptr = strtok(NULL, parameters_delim);
+
+        index++;
       }
-      else
-      {
-        fprintf(outfile, ", %s", ptr);
-      }
-      ptr = strtok(NULL, parameters_delim);
-      index++;
     }
-
-    fprintf(outfile, ")");
-
-    if (strcmp(umla->key.name, "id") == 0)
+    else
     {
-      fprintf(outfile, "->primary()");
-    }
+      int index = 0;
+      char *ptr = strtok(umla->key.type, parameters_delim);
 
-    if (umla->key.value[0] != 0)
-    {
-      if (strcmp(umla->key.value, "null") == 0)
+      while (ptr != NULL)
       {
-        fprintf(outfile, "->nullable()");
-      }
-      else
-      {
-        fprintf(outfile, "->default(%s)", umla->key.value);
-      }
-    }
+        if (index == 0) // assuming the type function will be the first.
+        {
+          fprintf(outfile, "%s('%s'", ptr, umla->key.name);
+        }
+        else if (strcmp(ptr, "unique") == 0)
+        {
+          fprintf(outfile, ")->unique(");
 
-    if (umla->key.comment[0] != 0)
-    {
-      fprintf(outfile, "->comment('%s')", umla->key.comment);
+          break;
+        }
+        else if (strcmp(ptr, "unsigned") == 0)
+        {
+          fprintf(outfile, ")->unsigned(");
+
+          break;
+        }
+        else if (strcmp(ptr, "autoIncrement") == 0)
+        {
+          fprintf(outfile, ")->autoIncrement(");
+
+          break;
+        }
+        else
+        {
+          fprintf(outfile, ", %s", ptr);
+        }
+
+        ptr = strtok(NULL, parameters_delim);
+
+        index++;
+      }
+
+      fprintf(outfile, ")");
+
+      if (strcmp(umla->key.name, "id") == 0)
+      {
+        fprintf(outfile, "->primary()");
+      }
+
+      if (umla->key.value[0] != 0)
+      {
+        if (strcmp(umla->key.value, "null") == 0)
+        {
+          fprintf(outfile, "->nullable()");
+        }
+        else
+        {
+          fprintf(outfile, "->default(%s)", umla->key.value);
+        }
+      }
+
+      if (umla->key.comment[0] != 0)
+      {
+        fprintf(outfile, "->comment('%s')", umla->key.comment);
+      }
     }
 
     fprintf(outfile, ";\n");
