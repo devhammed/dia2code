@@ -17,7 +17,7 @@
 
 #include "dia2code.h"
 
-#define NO_GENERATORS 12
+#define NO_GENERATORS 14
 
 void generate_code_c(batch *b);
 void generate_code_cpp(batch *b);

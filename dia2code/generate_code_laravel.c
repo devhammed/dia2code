@@ -100,6 +100,10 @@ int d2c_laravel_print_columns(FILE *outfile, umlclasslist tmplist)
         index++;
       }
     }
+    else if (strcmp(umla->key.type, "primary") == 0)
+    {
+      fprintf(outfile, "primary(%s)", umla->key.name);
+    }
     else
     {
       int index = 0;
@@ -111,21 +115,12 @@ int d2c_laravel_print_columns(FILE *outfile, umlclasslist tmplist)
         {
           fprintf(outfile, "%s('%s'", ptr, umla->key.name);
         }
-        else if (strcmp(ptr, "unique") == 0)
+        else if (strcmp(ptr, "unique") == 0 ||
+                 strcmp(ptr, "primary") == 0 ||
+                 strcmp(ptr, "unsigned") == 0 ||
+                 strcmp(ptr, "autoIncrement") == 0)
         {
-          fprintf(outfile, ")->unique(");
-
-          break;
-        }
-        else if (strcmp(ptr, "unsigned") == 0)
-        {
-          fprintf(outfile, ")->unsigned(");
-
-          break;
-        }
-        else if (strcmp(ptr, "autoIncrement") == 0)
-        {
-          fprintf(outfile, ")->autoIncrement(");
+          fprintf(outfile, ")->%s(", ptr);
 
           break;
         }

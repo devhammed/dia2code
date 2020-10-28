@@ -367,7 +367,6 @@ ini_parse_command ini_parse_commands[] =
         {"file.outdir", PARSE_TYPE_STRDUP, &outdir},
         {"indent.brace.newline", PARSE_TYPE_YESNO, &indent_open_brace_on_newline},
         {"indent.size", PARSE_TYPE_INT, &indent_count},
-        {"generate.backup", PARSE_TYPE_YESNO, &generate_backup},
         {NULL, -1, NULL}};
 
 void parse_command(char *name, char *value)
